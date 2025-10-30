@@ -8,13 +8,14 @@ import numpy as np
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchmetrics.classification import Accuracy, BinaryAccuracy
+from typing import Union
 
 from TransformerTimeseriesClassifier import *
-# from CNNTimeseriesClassifier import *
+from CNNTimeseriesClassifier import *
 # from LSTMTimeseriesClassifier import **
 
 class Trainer:
-    def __init__(self, model: TransformerTimeseriesClassifier, params: Params, 
+    def __init__(self, model: Union[SelfAttentionEncoderClassifier,ResNetClassifier], params: Params, 
                  optimizer, train_iter, valid_iter, debug=False):
         self.model = model
         self.debug = debug
@@ -30,7 +31,7 @@ class Trainer:
         # sending all to device
         self.model.to(self.params.device)
         self.test_tokens = None
-        self.similarity_path = 'data.pt'
+        self.model_path = 'model.pth'
         self.loss_path = 'loss.json'
    
     
@@ -193,12 +194,11 @@ class Trainer:
             torch.save(self.model, model_path)
 
     def save_model(self):
-        """Save final model to `self.model_dir` directory"""
-        model_path = os.path.join(self.params.model_dir, "model.pt")
-        torch.save(self.model, model_path)
+        """Save final model to `self.model_path`"""
+        torch.save(self.model.state_dict(), self.model_path)
 
     def save_loss(self):
-        """Save train/val loss as json file to `self.model_dir` directory"""   
+        """Save train/val loss as json file to `self.loss_path`"""   
         with open(self.loss_path, "w") as fp:
             json.dump(self.loss, fp)
 
