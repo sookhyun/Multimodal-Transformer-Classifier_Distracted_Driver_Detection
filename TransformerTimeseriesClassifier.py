@@ -2,9 +2,9 @@
 from Embedding import *
 from SelfAttentionEncoder import *
 
-class TransformerTimeseriesClassifier(nn.Module):
+class SelfAttentionEncoderClassifier(nn.Module):
     def __init__(self, params: Params): #num_feature, dim_embed, num_heads, num_layers, num_classes, dropout=0.1):
-        super(TransformerTimeseriesClassifier, self).__init__()
+        super(SelfAttentionEncoderClassifier, self).__init__()
         
         # Embedding layer
         self.embedding = TemporalFeatureEmbedding(params.num_features, params.seq_len, params.dim_embed)
