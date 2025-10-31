@@ -22,7 +22,6 @@ class ResNetLayer(nn.Module):
                 nn.Conv1d(in_channels, out_channels, kernel_size=1, stride=stride),
                 nn.BatchNorm1d(out_channels)
             )
-
     
 
     def forward(self, x):
@@ -32,6 +31,7 @@ class ResNetLayer(nn.Module):
         out += self.shortcut(residual)
         out = F.relu(out)
         return out
+
 
 
 class ResNetClassifier(nn.Module):
