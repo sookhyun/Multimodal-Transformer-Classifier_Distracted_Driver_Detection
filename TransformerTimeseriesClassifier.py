@@ -3,12 +3,14 @@ from Embedding import *
 from SelfAttentionEncoder import *
 
 class SelfAttentionEncoderClassifier(nn.Module):
-    def __init__(self, params: Params): #num_feature, dim_embed, num_heads, num_layers, num_classes, dropout=0.1):
+    def __init__(self, params: Params): 
         super(SelfAttentionEncoderClassifier, self).__init__()
         
         # Embedding layer
-        self.embedding = TemporalFeatureEmbedding(params.num_features, params.seq_len, params.dim_embed)
-        #nn.Linear(params.num_features, params.dim_embed)
+        if params.embedding == 0:
+            self.embedding = FullFeatureTemporalEmbedding(params.num_features, params.seq_len, params.dim_embed) 
+        elif params.embedding == 1:
+            self.embedding = FeatureLinearProjectionTemporalEmbedding(params.num_features, params.seq_len, params.dim_embed) 
         
         # Transformer Encoder layers
         self.encoder_layer = SelfAttentionEncoderLayer(params 
