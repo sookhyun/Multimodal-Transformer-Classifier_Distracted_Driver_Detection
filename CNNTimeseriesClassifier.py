@@ -35,19 +35,19 @@ class ResNetLayer(nn.Module):
 
 
 class ResNetClassifier(nn.Module):
-    def __init__(self, input_channels=27):
+    def __init__(self, input_channels=27, mult_out_channel=2):
         super(ResNetClassifier, self).__init__()
 
         # ResNet layers
-        self.layer1 = ResNetLayer(input_channels, 2*input_channels, kernel_size=8)
-        self.layer2 = ResNetLayer(2*input_channels, 4*input_channels, kernel_size=5)
-        self.layer3 = ResNetLayer(4*input_channels, 8*input_channels, kernel_size=3)
+        self.layer1 = ResNetLayer(input_channels, mult_out_channel*input_channels, kernel_size=8)
+        self.layer2 = ResNetLayer(mult_out_channel*input_channels, 2*mult_out_channel*input_channels, kernel_size=5)
+        self.layer3 = ResNetLayer(2*mult_out_channel*input_channels, 4*mult_out_channel*input_channels, kernel_size=3)
 
         # Global average pooling
         self.global_pool = nn.AdaptiveAvgPool1d(1)
 
         # Fully connected classifier
-        self.fc = nn.Linear(8*input_channels, 1)
+        self.fc = nn.Linear(4*mult_out_channel*input_channels, 1)
 
     def forward(self, x):
         # input x shape: (batch_size, seq_len, num_features)
