@@ -12,10 +12,10 @@ from typing import Union
 
 from TransformerTimeseriesClassifier import *
 from CNNTimeseriesClassifier import *
-# from LSTMTimeseriesClassifier import **
+from RNNTimeseriesClassifier import *
 
 class Trainer:
-    def __init__(self, model: Union[SelfAttentionEncoderClassifier,ResNetClassifier], params: Params, 
+    def __init__(self, model: Union[SelfAttentionEncoderClassifier,ResNetClassifier,LSTMClassifier], params: Params, 
                  optimizer, train_iter, valid_iter, debug=False):
         self.model = model
         self.debug = debug
@@ -31,8 +31,8 @@ class Trainer:
         # sending all to device
         self.model.to(self.params.device)
         self.test_tokens = None
-        self.model_path = 'model.pth'
-        self.loss_path = 'loss.json'
+        self.model_path = 'model.pt'
+        self.metrics_path = 'metrics.json'
    
     
     def train(self):
@@ -67,7 +67,7 @@ class Trainer:
             if self.params.checkpoint_frequency:
                 self._save_checkpoint(epoch)
 
-        self.save_loss()
+        self.save_metrics()
         self.do_test(save_results=True)  
 
     
@@ -118,7 +118,7 @@ class Trainer:
         accuracy.reset()  # reset for next epoch
         
         self.loss['train'].append(epoch_loss)
-        self.accuracy['train'].append(epoch_acc) 
+        self.accuracy['train'].append(epoch_acc.item()) 
 
 
     def _validate_epoch(self,_epoch):
@@ -149,7 +149,7 @@ class Trainer:
             accuracy.reset()  # reset for next epoch   
             
             self.loss['valid'].append(epoch_loss)
-            self.accuracy['valid'].append(epoch_acc) 
+            self.accuracy['valid'].append(epoch_acc.item()) 
 
 
     def compute_feature_importance(self, x, target_class=None):
@@ -186,19 +186,25 @@ class Trainer:
         return
         
     def _save_checkpoint(self, epoch):
-        """Save model checkpoint to `self.model_dir` directory"""
+        """Save model checkpoint to `self.checkpoint_dir` directory"""
         epoch_num = epoch + 1
         if epoch_num % self.params.checkpoint_frequency == 0:
             model_path = "checkpoint_{}.pt".format(str(epoch_num).zfill(3))
-            model_path = os.path.join(self.params.model_dir, model_path)
+            model_path = os.path.join(self.params.checkpoint_dir, model_path)
             torch.save(self.model, model_path)
 
     def save_model(self):
         """Save final model to `self.model_path`"""
-        torch.save(self.model.state_dict(), self.model_path)
+        torch.save(self.model, self.model_path)
 
-    def save_loss(self):
-        """Save train/val loss as json file to `self.loss_path`"""   
-        with open(self.loss_path, "w") as fp:
-            json.dump(self.loss, fp)
+    def save_metrics(self):
+        """Save train/val loss as json file to `self.metrics_path`"""   
+        metrics = {
+            'loss': self.loss,
+            'accuracy': self.accuracy
+        }
+
+        with open(self.metrics_path, "w") as fp:
+            json.dump(metrics, fp, indent=4)
+
 
