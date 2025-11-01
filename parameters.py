@@ -14,6 +14,9 @@ class Params:
     num_layers = 2
     num_classes = 2
     dropout=0.1
+    embedding : int = 0
+    fmult = 2
+    hidden_dim = 128
     
     # training parameters
     batch_size : int = 10
@@ -27,6 +30,6 @@ class Params:
     checkpoint_frequency = 1000
 
     model_name = 'SkipGram'
-    model_dir = "weights/{}".format(model_name)
+    checkpoint_dir = "weights/{}".format(model_name)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu") 
