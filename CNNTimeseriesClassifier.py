@@ -86,7 +86,7 @@ if __name__ == "__main__":
     model = ResNetClassifier(input_channels=input_channels)
 
     # Forward pass
-    logits = model(X)
+    logits = model(X.transpose(1, 2))
 
     # Check output shape
     print("Output shape:", logits.shape)
