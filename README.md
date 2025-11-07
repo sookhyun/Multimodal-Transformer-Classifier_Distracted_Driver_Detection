@@ -2,7 +2,7 @@
 
 ## Objectives:
 
-In this project, we develop deep learning classifiers to detect distracted drivers from **multimodal time series** data. The three main algorithms developed are: a Transformer classifier (self-attention encoder), an RNN/LSTM classifier, and a CNN/ResNet classifier.
+In this project, we develop deep learning classifiers to detect distracted drivers from **multimodal time series** data. The three main algorithms developed are: a Transformer classifier (self-attention encoder), a CNN/ResNet classifier, and an LSTM classifier.
 
 ## Dataset:
 
